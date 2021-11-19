@@ -1,49 +1,31 @@
-function updateStudentWithCustom(student) {
-  student["avg"] = avgOfNumbersArray(student.marks);
-  student["median"] = getMedianaValue(student.marks);
-  return student;
-}
+(() => {
+    const taskInputEl = document.getElementById('task-form-input');
+    const submitBtnEl = document.getElementById('task-form-submit');
+    const listEl = document.getElementById('items-list');
 
-function avgOfNumbersArray(numbers) {
-  return numbers.reduce((acc, e) => acc + e, 0) / numbers.length;
-}
+    const itemTemplate = document.getElementById('item-template').innerHTML;
 
-function getMedianaValue(numbers) {
-  let median,
-    medianRepeats = 0;
-  for (let i = 0; i < numbers.length; i++) {
-    let repeats = 0;
-    for (let j = 0; j < numbers.length; j++) {
-      if (numbers[i] === numbers[j]) {
-        repeats++;
-        if (repeats > medianRepeats) {
-          medianRepeats = repeats;
-          median = numbers[i];
+    listEl.addEventListener('click', evt => {
+        console.log(evt);
+        if (evt.target.classList.contains('nes-btn')) {
+            confirm('R u sure?') && evt.target.parentElement.remove();
         }
-      }
-    }
-  }
-  return median;
-}
+    });
 
-function getUnsuccessfulStudents(students) {
-  return students.filter((someMark) => someMark.avg < 50);
-}
+    listEl.addEventListener('change', evt => {
+        console.log(evt);
+    });
 
-function main() {
-  let list = studentsMock.getStudentList(10);
-  list = list.map(updateStudentWithCustom);
-  console.log(list);
+    submitBtnEl.addEventListener('click', () => {
+        const inputContent = taskInputEl.value;
+        if (!inputContent) return;
 
-  if (confirm("Do you want to check the list of less successful students?")) {
-    console.log(getUnsuccessfulStudents(list));
-  }
-  while (confirm("Do you want to add some student to this class?")) {
-    list.push(updateStudentWithCustom(studentsMock.getStudent()));
-  }
+        taskInputEl.value = '';
 
-  console.log(list);
-  console.log(list.map((e) => `${e.name} | ${e.avg}`).join("\n"));
-}
+        const liEl = document.createElement('li');
 
-main();
+        liEl.innerHTML = itemTemplate.replace('{{inputContent}}', inputContent);
+
+        listEl.append(liEl);
+    });
+})(); 
