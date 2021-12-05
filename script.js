@@ -1,68 +1,40 @@
-(() => {
-    const formEl = document.getElementById("form");
-    const emailEl = document.getElementById("emailInp");
-    const passwordEl = document.getElementById("passwordInp");
-    const btnEl = document.getElementById("btn");
-    const wrap = document.getElementById("wrap");
-    const errorEl = document.getElementById("error");
-    const errorPassword = document.getElementById("error-password");
-    const h2 = document.getElementById("h2");
-  
-    function submit() {
-      formEl.style.display = "none";
-      const alert = document.createElement("div");
-      wrap.append(alert);
-      alert.className = "alert";
-      alert.innerHTML = "Form submitted successfully! Congratulations :)";
-    }
-    // --------------------------Проверка на пустую строку---------------------------
-    function disable() {
-      if (emailEl.value === "" || passwordEl.value === "") {
-        btnEl.disabled = true;
-      } else {
-        btnEl.disabled = false;
-      }
-    }
+function Student(name, faculty, marks = []) {
+    this.name = name;
+    this.faculty = faculty;
+    this.marks = marks;
 
-    emailEl.addEventListener("blur", () => {
-      disable();
-      if (!emailEl.value.includes("@")) {
-        errorEl.innerHTML = "Enter correct email, please";
-        errorEl.style.color = "red";
-        emailEl.style.borderColor = "red";
-      }
-    });
-    emailEl.addEventListener("input", () => {
-      disable();
-    });
-  
-    passwordEl.addEventListener("blur", () => {
-      disable();
-      if (passwordEl.value === "") {
-        errorPassword.innerHTML = "Enter correct password, please";
-        errorPassword.style.color = "red";
-        passwordEl.style.borderColor = "red";
-        passwordEl.value = "";
-      }
-    });
-    passwordEl.addEventListener("input", () => {
-      disable();
-    });
+    this.getMax = () => {
+        return Math.max(...this.marks);
+    };
 
-    function check() {
-      if (!emailEl.value != "admin@mail.com" && passwordEl.value != "12345") {
-        const massege = document.createElement("div");
-        massege.innerHTML = "Form is not correct";
-        massege.style.color = "red";
-        h2.after(massege);
-      } else {
-        submit();
-      }
-    }
-  
-    btnEl.addEventListener("click", (event) => {
-      event.preventDefault();
-      emailEl.value = "";
-      check();
-    });
-  })();
+    this.getMin = () => {
+        return Math.min(...this.marks);
+    };
+
+    this.getAvg = () => {
+        return this.marks.reduce((acc, e) => acc + e, 0) / this.marks.length;
+    };
+
+    this.getSum = () => {
+        return this.marks.reduce((acc, e) => acc + e, 0);
+    };
+
+    this.getInfo = () => {
+        return `
+        Student name: ${this.name}
+        Faculty: ${this.faculty}
+        Avg. : ${this.getAvg()}
+        `;
+    };
+}
+
+const studentA = new Student('Bob Doe', 'Philosophy', [12, 10, 11, 8, 10, 5]);
+const studentB = new Student('John Cooper', 'Math', [6, 7, 3, 8, 12, 5]);
+
+console.log(studentA.getMax());
+console.log(studentB.getMax());
+
+const group = [
+    new Student('Bob Doe', 'Philosophy', [12, 10, 11, 8, 10, 5]),
+    new Student('John Cooper', 'Math', [6, 7, 3, 8, 12, 5])
+];
