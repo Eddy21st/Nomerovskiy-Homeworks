@@ -1,40 +1,12 @@
-function Student(name, faculty, marks = []) {
-    this.name = name;
-    this.faculty = faculty;
-    this.marks = marks;
+const baseAccordion = new Accordion(document.getElementById('accordion-demo'));
 
-    this.getMax = () => {
-        return Math.max(...this.marks);
-    };
+baseAccordion.init();
+baseAccordion.openItem(1);
 
-    this.getMin = () => {
-        return Math.min(...this.marks);
-    };
+console.log(baseAccordion.getOpenedIndexes());
 
-    this.getAvg = () => {
-        return this.marks.reduce((acc, e) => acc + e, 0) / this.marks.length;
-    };
+baseAccordion.addItem('Test', '<p>Own content</p>');
 
-    this.getSum = () => {
-        return this.marks.reduce((acc, e) => acc + e, 0);
-    };
-
-    this.getInfo = () => {
-        return `
-        Student name: ${this.name}
-        Faculty: ${this.faculty}
-        Avg. : ${this.getAvg()}
-        `;
-    };
-}
-
-const studentA = new Student('Bob Doe', 'Philosophy', [12, 10, 11, 8, 10, 5]);
-const studentB = new Student('John Cooper', 'Math', [6, 7, 3, 8, 12, 5]);
-
-console.log(studentA.getMax());
-console.log(studentB.getMax());
-
-const group = [
-    new Student('Bob Doe', 'Philosophy', [12, 10, 11, 8, 10, 5]),
-    new Student('John Cooper', 'Math', [6, 7, 3, 8, 12, 5])
-];
+setTimeout(() => {
+    baseAccordion.openAll();
+}, 5000);
