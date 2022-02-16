@@ -1,63 +1,65 @@
-function Burger(size, topping = []) {
-    this.size = size;
-    this.toppings = [...topping];
-}
+const API_URL = 'https://reqres.in/api/users';
+const userCardTemplate = document.getElementById('user-card-template').innerHTML;
 
-Burger.SIZE = {
-    small: {
-        price: 50,
-        nrj: 20
-    },
-    medium: {
-        price: 75,
-        nrj: 30,
-    },
-    big: {
-        price: 100,
-        nrj: 40
-    }
+const render = (template, bindings) => {
+    let result = template;
+    Object.keys(bindings).forEach(e => {
+        result = result.replaceAll(`{{${e}}}`, bindings[e]);
+    });
+    return result;
 };
 
-Burger.TOPPING = {
-    CHEESE: {
-        price: 10,
-        nrj: 10
-    },
-    LETTUCE: {
-        price: 10,
-        nrj: 5
-    },
-    FRENCH_FRIES: {
-        price: 15,
-        nrj: 25
-    },
-    SPICE: {
-        price: 15,
-        nrj: 1
-    },
-    EXTRA_MAYO: {
-        price: 20,
-        nrj: 25
-    }
+const renderUserList = users => {
+    const userListEl = document.getElementById('user-list');
+    const templates = users
+        .map(e => ({ ...e, name: `${e.first_name} ${e.last_name}` }))
+        .map(e => render(userCardTemplate, e))
+        .join('');
+
+    userListEl.innerHTML = templates;
 };
 
-Burger.prototype.addTopping = function (...toppings) {
-    this.toppings.push(...toppings);
+const getUsers = (page = 1, callback) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', `${API_URL}?page=${page}`, true);
+    xhr.send();
+
+    xhr.onload = (e) => {
+        const { data, total_pages } = JSON.parse(e.currentTarget.responseText);
+        callback && callback(data, total_pages);
+    };
 };
 
-Burger.prototype.getPrice = function () {
-    return this.size.price + this.toppings.reduce((acc, e) => acc + e.price, 0);
-};
+ (() => {
+     const actionPrevEl = document.getElementById('action-prev');
+     const actionNextEl = document.getElementById('action-next');
+     const pagesEl = document.getElementById('pages');
+     let globalPage = 1;
 
-Burger.prototype.getCCal = function () {
-    return this.size.nrj + this.toppings.reduce((acc, e) => acc + e.nrj, 0);
-};
+     const renderCall = page => {
+         getUsers(page, users => {
+             renderUserList(users);
+         });
+     };
 
-const cheeseBurger = new Burger(Burger.SIZE.medium);
+     actionNextEl.addEventListener('click', e => {
+         renderCall(++globalPage);
+     });
 
-cheeseBurger.addTopping(Burger.TOPPING.CHEESE);
-cheeseBurger.addTopping(Burger.TOPPING.LETTUCE);
-cheeseBurger.addTopping(Burger.TOPPING.SPICE);
+     actionPrevEl.addEventListener('click', e => {
+         renderCall(--globalPage);
+     });
 
-console.log(cheeseBurger, cheeseBurger.getPrice());
-console.log(cheeseBurger, cheeseBurger.getCCal());
+     pagesEl.addEventListener('click', e => {
+         if (e.target.classList.contains('nes-btn')) {
+             const { page } = e.target.dataset;
+             globalPage = page;
+             renderCall(page);
+         }
+     });
+
+     renderCall(globalPage);
+
+
+ })();
